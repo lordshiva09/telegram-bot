@@ -1,6 +1,6 @@
 const TelegramBot = require('node-telegram-bot-api');
 
-const token = "8688507248:AAF8I3pnsiEc0owicTA58VWKNKfh2R4WVpA";
+const token = process.env.BOT_TOKEN;
 
 const bot = new TelegramBot(token, { polling: true });
 
@@ -16,7 +16,7 @@ const targetChannels = [
 -1003696678983,
 -1003833837993,
 -1003616717450,
--1003746525854, 
+-1003746525854,
 -1003711269762,
 -1003598472023,
 -1003818125531,
@@ -30,15 +30,25 @@ const targetChannels = [
 -1003670966361
 ];
 
-bot.on("channel_post", (msg) => {
+bot.on("channel_post", async (msg) => {
 
 if(msg.chat.id == sourceChannel){
 
-targetChannels.forEach(channel => {
+for (let channel of targetChannels) {
 
-bot.copyMessage(channel, sourceChannel, msg.message_id);
+try {
 
-});
+await bot.copyMessage(channel, sourceChannel, msg.message_id);
+
+console.log(`Sent to ${channel}`);
+
+} catch (error) {
+
+console.log(`Failed to send to ${channel}`, error.message);
+
+}
+
+}
 
 }
 
